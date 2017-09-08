@@ -1,6 +1,6 @@
 Comment,Contact,DateAdded,DetectionRating,DetectionScore,ResponseRating,ResponseScore,SophisticationRating,SophisticationScore,TacticID
-,admin,3/20/2017,Active Visual,0-100,Identification and Response,0-100,Practitioner,0-100,T1064
-,admin,3/20/2017,No Visual,0-100,No Response,0-100,Practitioner,0-100,T1113
-,admin,3/20/2017,No Visual,0-100,Response,0-100,Practitioner,0-100,T1053
-,admin,3/19/2017,Local Visual,0-100,Response,0-100,Practitioner,0-100,T1081
-,admin,3/19/2017,Local Visual,0-100,No Response,0-100,Practitioner,0-100,T1119
+,admin,3/20/2017,Active Visual,100,Identification and Response,100,Practitioner,30,T1064
+,admin,3/20/2017,No Visual,0,No Response,0,Practitioner,30,T1113
+,admin,3/20/2017,No Visual,0,Response,60,Practitioner,30,T1053
+,admin,3/19/2017,Local Visual,30,Response,60,Practitioner,30,T1081
+,admin,3/19/2017,Local Visual,30,No Response,0,Practitioner,30,T1119
