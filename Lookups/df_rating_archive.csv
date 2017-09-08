@@ -1,5 +1,5 @@
 Comment,Contact,DateAdded,DateReport,DetectionRating,DetectionScore,ResponseRating,ResponseScore,SophisticationRating,SophisticationScore,asset_id,asset_name,asset_type,scoring_method
-,admin,8/1/2017,1502078400,Local Visual,0-100,Identification and Response,0-100,Novice,0-100,T1066,Indicator Removal from Tools,tactic,manual
-,admin,8/1/2017,1502078400,No Visual,0-100,No Response,0-100,Novice,0-100,T1123,Audio Capture,tactic,manual
-,automated,8/1/2017,1502078400,Local Visual,0-100,Identification,0-100,Novice,0-100,T1078,Legitimate Credentials,tactic,automated
-,admin,8/1/2017,1502078400,No Visual,0-100,No Response,0-100,Novice,0-100,T1006,File System Logical Offsets,tactic,manual
+,admin,8/1/2017,1502078400,Local Visual,30,Identification and Response,100,Novice,0,T1066,Indicator Removal from Tools,tactic,manual
+,admin,8/1/2017,1502078400,No Visual,0,No Response,0,Novice,0,T1123,Audio Capture,tactic,manual
+,automated,8/1/2017,1502078400,Local Visual,30,Identification,30,Novice,0,T1078,Legitimate Credentials,tactic,automated
+,admin,8/1/2017,1502078400,No Visual,0,No Response,60,Novice,0,T1006,File System Logical Offsets,tactic,manual
