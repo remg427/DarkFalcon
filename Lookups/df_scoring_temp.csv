@@ -1,0 +1,7 @@
+Comment,Contact,DateAdded,DetectionRating,DetectionScore,ResponseRating,ResponseScore,SophisticationRating,SophisticationScore,asset_id,type
+,admin,2/1/2017,No Visual,0-100,No Response,0-100,Novice,0-100,T1109,tactic
+,admin,2/1/2017,Central Visual,0-100,Response,0-100,Novice,0-100,T1122,tactic
+,admin,2/1/2017,Local Visual,0-100,Identification,0-100,Novice,0-100,T1090,tactic
+,admin,2/1/2017,Active Visual,0-100,Identification and Response,0-100,Novice,0-100,T1003,tactic
+,admin,2/1/2017,Local Visual,0-100,Identification,0-100,Novice,0-100,T1098,tactic
+,admin,2/1/2017,Local Visual,0-100,No Response,0-100,Novice,0-100,T1094,tactic
