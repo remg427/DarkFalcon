@@ -1,0 +1,6 @@
+created,id,modified,name,type
+1497518379,72409c14-9fe0-4f25-9e94-b123456125t,1497518606,Download Industroyer / CrashOverride Malware Sample #3,Attack
+1474995619,72409c14-9fe0-4f25-9e94-b123456125t,1497433884,Create Registry Entry,Attack
+1442256139,72409c14-9fe0-4f25-9e94-b123456125t,1497433777,Locky Ransomware Persistence,Attack
+1442256149,72409c14-9fe0-4f25-9e94-b123456125t,1497357001,Web Request,Validation
+1497355607,72409c14-9fe0-4f25-9e94-b123456125t,1497356721,MobileConfig Install Validation,Validation
