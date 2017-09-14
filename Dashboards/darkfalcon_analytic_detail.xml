@@ -1,0 +1,206 @@
+<form stylesheet="search:dark.css">
+  <label>darkfalcon_analytic_detail</label>
+  <fieldset submitButton="false">
+    <html>
+      <div style="text-align: center;">
+      <a href="darkfalcon">
+    	<img src="http://push2dev/static/falcon.png" width="550"/>
+      </a>
+      </div>
+    </html>
+    <input type="dropdown" token="input_analytic_id" searchWhenChanged="true">
+      <label>Analytic</label>
+      <search>
+        <query>|inputlookup df_analytic_detail.csv|fields AnalyticID Summary|sort Summary</query>
+        <earliest>-4h@m</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>Summary</fieldForLabel>
+      <fieldForValue>AnalyticID</fieldForValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Details</title>
+      <single>
+        <search>
+          <query>|inputlookup df_analytic_detail.csv|where AnalyticID="$input_analytic_id$"|fields AnalyticID</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">ID</option>
+      </single>
+      <single>
+        <search>
+          <query>|inputlookup df_analytic_detail.csv|where AnalyticID="$input_analytic_id$"|fields Summary</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">Tactic</option>
+      </single>
+      <single>
+        <search>
+          <query>|inputlookup df_analytic_detail.csv|where AnalyticID="$input_analytic_id$"|fields Type| eval Type=replace(Type,","," ")</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">Category</option>
+      </single>
+      <single>
+        <search>
+          <query>|inputlookup df_analytic_detail.csv|where AnalyticID="$input_analytic_id$"| head 1| fields URL</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <finalized>
+           <condition match="'job.resultCount' == 1">
+             <set token="tok_url">$result.URL$</set>
+           </condition>
+           <condition match="'job.resultCount' != 1">
+             <unset token="tok_url"></unset>
+           </condition>
+        </finalized>  
+        </search>
+        <option name="drilldown">all</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">URL</option>
+      </single>
+      <html>
+      	<style>.btn-secondary { margin: 5px 10px 5px 0; }</style>
+        <a href="$tok_url$" class="btn btn-secondary" target="_BLANK">View Details on MITRE</a>
+        
+        <a href="https://car.mitre.org/caret/#/" class="btn btn-secondary" target="_BLANK">View MITRE CARET</a>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <table>
+      <search>
+        <query>|inputlookup df_analytic_detail.csv|where AnalyticID="$input_analytic_id$"|fields Hypothysis</query>
+        <earliest>0</earliest>
+        <latest></latest>
+      </search>
+      <option name="drilldown">cell</option>
+      <option name="colorBy">value</option>
+      <option name="colorMode">none</option>
+      <option name="numberPrecision">0</option>
+      <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+      <option name="rangeValues">[0,30,70,100]</option>
+      <option name="showSparkline">1</option>
+      <option name="showTrendIndicator">1</option>
+      <option name="trendColorInterpretation">standard</option>
+      <option name="trendDisplayMode">absolute</option>
+      <option name="unitPosition">after</option>
+      <option name="useColors">0</option>
+      <option name="useThousandSeparators">1</option>
+      <option name="linkView">search</option>
+      <option name="wrap">true</option>
+      <option name="rowNumbers">false</option>
+      <option name="dataOverlayMode">none</option>
+      <option name="count">10</option>
+    </table>
+  </row>
+  <row>
+    <html>
+      <hr/>
+    </html>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Scoring</title>
+        <search>
+          <query>|inputlookup df_analytic_rating.csv |join AnalyticID[|inputlookup df_analytic_detail.csv]|where AnalyticID="$input_analytic_id$"| eval CompositeScore=DetectionScore+ResponseScore+SophisticationScore| fields AnalyticID Summary DetectionRating DetectionScore ResponseRating ResponseScore SophisticationRating SophisticationScore CompositeScore DateAdded Contact Comment</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_analytic_scoring?form.input_asset=$row.AnalyticID$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <html>
+      <hr/>
+    </html>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Linked Tactics</title>
+        <search>
+          <query>| inputlookup df_tactic_detail.csv| search [| inputlookup df_analytic_detail.csv|where like(AnalyticID,"%$input_analytic_id$%")|fields TacticID| makemv delim="," TacticID| mvexpand TacticID]|table TacticID Tactic Category|eval Category=replace(Category,","," ")| sort Tactic</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">25</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_tactic_detail?form.input_tactic_id=$row.TacticID$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+</form>

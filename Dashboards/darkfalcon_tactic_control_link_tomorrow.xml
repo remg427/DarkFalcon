@@ -1,0 +1,103 @@
+<form stylesheet="search:dark.css">
+  <label>darkfalcon_tactic_control_link_tomorrow</label>
+  <description>Used for linking security controls to tactics in the tomorrow modeling tool</description>
+  <fieldset submitButton="true" autoRun="true">
+    <html>
+      <div style="text-align: center;">
+      <a href="darkfalcon">
+    	<img src="http://push2dev/static/falcon.png" width="550"/>
+      </a>
+      </div>
+    </html>
+    <input type="dropdown" token="input_tactic_id">
+      <label>Tactic</label>
+      <search>
+        <query>|inputlookup df_tactic_detail.csv|fields TacticID Tactic</query>
+        <earliest>-4h@m</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>Tactic</fieldForLabel>
+      <fieldForValue>TacticID</fieldForValue>
+    </input>
+    <input type="dropdown" token="input_control_id" id="input_dropdown1">
+      <label>Control</label>
+      <search>
+        <query>|inputlookup df_control_detail.csv| eval control_label=control_vendor."-".control_name| sort control_label</query>
+        <earliest>0</earliest>
+        <latest></latest>
+      </search>
+      <fieldForLabel>control_label</fieldForLabel>
+      <fieldForValue>df_control_id</fieldForValue>
+    </input>
+    <input type="radio" token="input_mode">
+      <label>Mode</label>
+      <choice value="add">Add</choice>
+      <choice value="delete">Remove</choice>
+      <default>add</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>New Entry</title>
+      <table>
+        <search>
+          <query>| inputlookup df_tactic_control_map_tomorrow.csv
+| append [     stats count 
+    | eval TacticID = "$input_tactic_id$"  
+    | eval df_control_id= "$input_control_id$"  
+    | eval temp_dt = now()     
+    | eval DateAdded = strftime(now(), "%Y-%m-%d") 
+    | fields - _raw _time count  
+    | table *
+    |  join type=outer [ |rest /services/authentication/current-context/context
+    | fields username| where username!="splunk-system-user"  | rename username AS Contact]]
+
+| sort -temp_dt | dedup TacticID df_control_id | fields - temp_dt | sort - DateAdded  
+
+| eval mode = "$input_mode$"
+| eval delete=if(mode="delete" and TacticID="$input_tactic_id$"  and df_control_id="$input_control_id$", "yes", "no")
+| where delete="no"
+| fields - delete mode
+
+| outputlookup df_tactic_control_map_tomorrow.csv</query>
+          <earliest>-4h@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Current Entries</title>
+      <table>
+        <search>
+          <query>| inputlookup df_tactic_control_map_tomorrow.csv
+
+| join type=left TacticID[ | inputlookup df_tactic_detail.csv
+    | fields TacticID Tactic]
+
+| join type=left df_control_id[ | inputlookup df_control_detail.csv
+    | fields df_control_id control_vendor control_name]
+
+| table TacticID Tactic df_control_id control_name control_vendor DateAdded Contact
+
+| eval epoch1=strptime(DateAdded, "%Y-%m-%d")
+| sort - epoch1
+| fields - epoch1</query>
+          <earliest>-4h@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</form>

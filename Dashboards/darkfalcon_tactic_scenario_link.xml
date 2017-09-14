@@ -1,0 +1,124 @@
+<form stylesheet="search:dark.css">
+  <label>darkfalcon_tactic_scenario_link</label>
+  <description>Used for linking tactics to FireDrill projects and scenarios</description>
+  <fieldset submitButton="true" autoRun="true">
+    <html>
+      <div style="text-align: center;">
+      <a href="darkfalcon">
+    	<img src="http://push2dev/static/falcon.png" width="550"/>
+      </a>
+      </div>
+    </html>
+    <input type="dropdown" token="input_tactic_id">
+      <label>Tactic</label>
+      <search>
+        <query>|inputlookup df_tactic_detail.csv|fields TacticID Tactic| sort Tactic</query>
+        <earliest>-4h@m</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>Tactic</fieldForLabel>
+      <fieldForValue>TacticID</fieldForValue>
+    </input>
+    <input type="dropdown" token="input_scenario_id" id="input_dropdown1">
+      <label>FireDrill Scenario</label>
+      <search>
+        <query>|inputlookup df_firedrill_scenario_detail.csv| rename id as scenario_id name as scenario_name | eval scenario_name=type." - ".scenario_name| sort scenario_name</query>
+        <earliest>0</earliest>
+      </search>
+      <fieldForLabel>scenario_name</fieldForLabel>
+      <fieldForValue>scenario_id</fieldForValue>
+    </input>
+    <input type="dropdown" token="input_project_id">
+      <label>FireDrill Project</label>
+      <choice value="projectID">projectName</choice>
+      <default>projectID</default>
+    </input>
+    <input type="dropdown" token="input_sophistication_blocked">
+      <label>Sophistication If Blocked</label>
+      <choice value="Novice">Novice</choice>
+      <choice value="Practioner">Practioner</choice>
+      <choice value="Expert">Expert</choice>
+      <choice value="Innovator">Innovator</choice>
+      <default>Novice</default>
+    </input>
+    <input type="dropdown" token="input_sophistication_allowed">
+      <label>Sophistication If Allowed</label>
+      <choice value="Novice">Novice</choice>
+      <choice value="Practioner">Practioner</choice>
+      <choice value="Expert">Expert</choice>
+      <choice value="Innovator">Innovator</choice>
+      <default>Novice</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>New Entry</title>
+      <table>
+        <search>
+          <query>| inputlookup df_tactic_scenario_map.csv
+
+| append [     stats count 
+    | eval TacticID = "$input_tactic_id$"  
+    | eval ProjectID= "$input_project_id$"  
+    | eval ScenarioID= "$input_scenario_id$"
+    | eval SophisticationIfBlockedRating= "$input_sophistication_blocked$"
+    | eval SophisticationIfAllowedRating= "$input_sophistication_allowed$"
+
+    | eval temp_dt = now()     
+    | eval DateAdded = strftime(now(), "%Y-%m-%d") 
+    | fields - _raw _time count  
+    | table *
+    | join type=outer [ |rest /services/authentication/current-context/context
+    | fields username| where username!="splunk-system-user"  | rename username AS Contact]]
+
+| eval SophisticationIfBlockedScore=case(SophisticationIfBlockedRating=="Novice", 0,SophisticationIfBlockedRating=="Practitioner", 30, SophisticationIfBlockedRating=="Expert", 60, SophisticationIfBlockedRating=="Innovator", 100)
+| eval SophisticationIfAllowedScore=case(SophisticationIfAllowedRating=="Novice", 0,SophisticationIfAllowedRating=="Practitioner", 30, SophisticationIfAllowedRating=="Expert", 60, SophisticationIfAllowedRating=="Innovator", 100)
+      
+| sort -temp_dt | dedup TacticID ProjectID ScenarioID | fields - temp_dt | sort - DateAdded  
+
+| outputlookup df_tactic_scenario_map.csv
+
+| where TacticID="$input_tactic_id$" and ProjectID="$input_project_id$" and ScenarioID="$input_scenario_id$"</query>
+          <earliest>-4h@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Current Entries</title>
+      <table>
+        <search>
+          <query>| inputlookup df_tactic_scenario_map.csv
+
+| join type=left ScenarioID[ | inputlookup df_firedrill_scenario_detail.csv
+    | rename name as Scenario id as ScenarioID| fields ScenarioID Scenario]
+
+| join type=left ProjectID[ | inputlookup df_firedrill_results.csv
+    | dedup ProjectID| fields ProjectID ProjectName]
+
+| join type=left TacticID[ | inputlookup df_tactic_detail.csv
+    | fields TacticID Tactic]
+
+| rename SophisticationIfBlockedRating as "Sophistication If Blocked"
+| rename SophisticationIfAllowedRating as "Sophistication If Allowed"
+            
+| table TacticID Tactic ProjectName Scenario "Sophistication If Blocked" "Sophistication If Allowed" DateAdded Contact</query>
+          <earliest>-4h@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</form>
