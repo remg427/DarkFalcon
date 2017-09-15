@@ -1,0 +1,52 @@
+Title: darkfalcon_auto_scoring_report
+
+Description: This summarizes the firedrill test results and calculates scores for the matching tactics and updates them.
+
+Search:
+| inputlookup df_tactic_rating.csv
+
+| join type=left TacticID[ | inputlookup df_tactic_scenario_map.csv | fields TacticID
+    | dedup TacticID
+    | eval scoring_method="automated"
+]
+
+| append [  | inputlookup df_tactic_scenario_map.csv
+    | join type=left ProjectID ScenarioID [| inputlookup df_firedrill_results.csv
+        | fields ResultTime, OutcomeID, OutcomeName, ProjectID, ScenarioID]
+
+    | where ResultTime > relative_time(now(), "-3h@h")
+
+    | eval ScoreRating=if(OutcomeID="2", SophisticationIfAllowedRating, SophisticationIfBlockedRating)
+
+    | eval DetectionScore=case(ScoreRating=="Novice", 0,ScoreRating=="Practitioner", 30, ScoreRating=="Expert", 60, ScoreRating=="Innovator", 100)
+    | eval ResponseScore=DetectionScore
+    | eval SophisticationScore=DetectionScore
+
+    | stats mode(DetectionScore) as DetectionScore mode(ResponseScore) as ResponseScore mode(SophisticationScore) as SophisticationScore by TacticID
+
+    | eval DetectionRating=case(DetectionScore==0,"No Visual",DetectionScore==30,"Local Visual", DetectionScore==60,"Central Visual", DetectionScore==100,"Active Visual")
+    | eval ResponseRating=case(ResponseScore==0,"No Response",ResponseScore==30,"Identification", ResponseScore==60,"Response", ResponseScore==100,"Identification and Response")
+    | eval SophisticationRating=case(SophisticationScore==0,"Novice",SophisticationScore==30,"Practitioner", SophisticationScore==60,"Expert", SophisticationScore==100,"Innovator")
+
+    | eval scoring_method="automated"
+    | eval Contact="automated"
+    
+    | eval temp_dt = now()   
+    | eval DateAdded = strftime(now(), "%Y-%m-%d")           
+    | fields - _raw _time count
+    | table *     
+]  
+
+| fillnull value="manual" scoring_method
+
+| sort -temp_dt
+| dedup TacticID
+| fields - temp_dt
+| sort - DateAdded
+
+|outputlookup df_tactic_rating.csv
+
+
+Time range: Earliest: -15m, Latest: now
+
+Cron Schedule: * */2 * * *
