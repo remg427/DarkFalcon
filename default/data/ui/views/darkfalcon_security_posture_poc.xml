@@ -1,0 +1,529 @@
+<dashboard stylesheet="search:dark.css">
+  <label>darkfalcon_security_posture_poc</label>
+  <description>This is the security posture using the scoring from the poc input and combined with historical to show impact</description>
+  <row>
+    <panel>
+      <title>Security Posture - Current</title>
+      <single>
+        <search>
+          <query>| inputlookup df_rating_archive.csv  
+| where asset_type="tactic" 
+| rename DateReport as _time   
+| append [|inputlookup df_tactic_rating_poc.csv 
+    | join type=left TacticID [| inputlookup df_tactic_detail.csv 
+    | fields TacticID Tactic]
+    | eval _time = now() 
+    |rename Tactic as asset_name, TacticID as asset_id
+ ]  
+
+| stats sum(DetectionScore) as score, count(DetectionScore) as tactic_count by _time  
+| eval score=round(score/(tactic_count*100),2)*100  
+| fields - tactic_count  
+| timechart span=7d values(score) as score 
+| eval score=coalesce(mvindex(score, 1),mvindex(score, 0)) 
+| eval timeframe=relative_time(now(),"-90d")  
+| where _time &gt;= timeframe  
+| fields - timeframe</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">% Attack Detection Ability</option>
+      </single>
+      <single>
+        <search>
+          <query>| inputlookup df_rating_archive.csv  
+| where asset_type="tactic" 
+| rename DateReport as _time   
+| append [|inputlookup df_tactic_rating_poc.csv 
+    | join type=left TacticID [| inputlookup df_tactic_detail.csv 
+    | fields TacticID Tactic]
+    | eval _time = now() 
+    |rename Tactic as asset_name, TacticID as asset_id
+ ]  
+
+| stats sum(ResponseScore) as score, count(ResponseScore) as tactic_count by _time  
+| eval score=round(score/(tactic_count*100),2)*100  
+| fields - tactic_count  
+| timechart span=7d values(score) as score 
+| eval score=coalesce(mvindex(score, 1),mvindex(score, 0)) 
+| eval timeframe=relative_time(now(),"-90d")  
+| where _time &gt;= timeframe  
+| fields - timeframe</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">% Attack Response Capability</option>
+      </single>
+      <single>
+        <search>
+          <query>| inputlookup df_rating_archive.csv  
+| where asset_type="tactic" 
+| rename DateReport as _time   
+| append [|inputlookup df_tactic_rating_poc.csv 
+    | join type=left TacticID [| inputlookup df_tactic_detail.csv 
+    | fields TacticID Tactic]
+    | eval _time = now() 
+    |rename Tactic as asset_name, TacticID as asset_id
+ ]  
+
+| stats sum(SophisticationScore) as score, count(SophisticationScore) as tactic_count by _time  
+| eval score=round(score/(tactic_count*100),2)*100  
+| fields - tactic_count  
+| timechart span=7d values(score) as score 
+| eval score=coalesce(mvindex(score, 1),mvindex(score, 0)) 
+| eval timeframe=relative_time(now(),"-90d")  
+| where _time &gt;= timeframe  
+| fields - timeframe</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">trend</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xd93f3c"]</option>
+        <option name="rangeValues">[0,5,10]</option>
+        <option name="underLabel">% Attacker Effort</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Security Posture - Last 6 months</title>
+      <chart>
+        <search>
+          <query>| inputlookup df_rating_archive.csv    | where asset_type="tactic"   | rename DateReport as _time   | append [|inputlookup df_tactic_rating_poc.csv | join type=left TacticID [| inputlookup df_tactic_detail.csv | fields TacticID Tactic]| eval _time = now() |rename Tactic as asset_name, TacticID as asset_id| eval asset_type="tactic"] | stats sum(SophisticationScore) as score_sophistication, count(SophisticationScore) as tactic_count by _time  | eval score_sophistication=round(score_sophistication*100/(tactic_count*100),2)   | fields - tactic_count   | timechart span=7d values(score_sophistication) as score_sophistication   | eval score_sophistication=coalesce(mvindex(score_sophistication, 1),mvindex(score_sophistication, 0))  | join _time[ | inputlookup df_rating_archive.csv   | where asset_type="tactic"  | rename DateReport as _time  | append [|inputlookup df_tactic_rating_poc.csv | join type=left TacticID [| inputlookup df_tactic_detail.csv | fields TacticID Tactic]| eval _time = now() |rename Tactic as asset_name, TacticID as asset_id| eval asset_type="tactic"] | stats sum(ResponseScore) as score_response, count(ResponseScore) as tactic_count by _time  | eval score_response=round(score_response*100/(tactic_count*100),2)  | fields - tactic_count  | timechart span=7d values(score_response) as score_response  | eval score_response=coalesce(mvindex(score_response, 1),mvindex(score_response, 0)) ]     | join _time[ | inputlookup df_rating_archive.csv   | where asset_type="tactic"  | rename DateReport as _time  | append [|inputlookup df_tactic_rating_poc.csv | join type=left TacticID [| inputlookup df_tactic_detail.csv | fields TacticID Tactic]| eval _time = now() |rename Tactic as asset_name, TacticID as asset_id| eval asset_type="tactic"] | stats sum(DetectionScore) as score_detection, count(DetectionScore) as tactic_count by _time  | eval score_detection=round(score_detection*100/(tactic_count*100),2)  | fields - tactic_count  | timechart span=7d values(score_detection) as score_detection  | eval score_detection=coalesce(mvindex(score_detection, 1),mvindex(score_detection, 0))  ]     | eval timeframe=relative_time(now(),"-180d")  | where _time &gt;= timeframe  | fields - timeframe  | rename score_sophistication as " Attacker Effort" score_response as "Attack Response" score_detection as "Attack Detection"</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.axisTitleY.text">% Capable</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Security Posture - By Attack Type</title>
+        <search>
+          <query>|inputlookup df_tactic_rating_poc.csv
+| join TacticID[|inputlookup df_tactic_detail.csv]
+|where like(Category,"%Discovery%")
+|eval category_test="Discovery"   
+
+|append [|inputlookup df_tactic_rating_poc.csv
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Execution%")
+    |eval category_test="Execution"]   
+
+|append [|inputlookup df_tactic_rating_poc.csv
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Persistence%")
+    |eval category_test="Persistence"]   
+
+|append [|inputlookup df_tactic_rating_poc.csv
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Privilege Escalation%")
+    |eval category_test="Privilege Escalation"]   
+
+|append [|inputlookup df_tactic_rating_poc.csv
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Defense Evasion%")
+    |eval category_test="Defense Evasion"]   
+
+|append [|inputlookup df_tactic_rating_poc.csv
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Credential Access%")
+    |eval category_test="Credential Access"]   
+
+|append [|inputlookup df_tactic_rating_poc.csv
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Lateral Movement%")
+    |eval category_test="Lateral Movement"]   
+
+|append [|inputlookup df_tactic_rating_poc.csv
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Collection%")
+    |eval category_test="Collection"]   
+
+|append [|inputlookup df_tactic_rating_poc.csv
+     | join TacticID[|inputlookup df_tactic_detail.csv]
+     |where like(Category,"%Exfiltration%")
+     |eval category_test="Exfiltration"]   
+
+|append [|inputlookup df_tactic_rating_poc.csv
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Command and Control%")
+    |eval category_test="Command and Control"]    
+
+|stats sum(DetectionScore) as score_detection, sum(ResponseScore) as score_response, sum(SophisticationScore) as score_sophistication, count(DetectionScore) as tactic_count by category_test
+|eval score_composite = score_detection + score_response +score_sophistication  
+| eval score_composite=round(score_composite*100/(tactic_count*300))  
+|rename score_composite as current_score 
+| fields category_test current_score
+   
+|join category_test[ |inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time
+    |rename asset_id as TacticID 
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Discovery%")
+    |eval category_test="Discovery"   
+    
+    |append[|inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time
+    |rename asset_id as TacticID 
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Execution%")
+    |eval category_test="Execution"]   
+
+    |append[|inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time
+    |rename asset_id as TacticID 
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Persistence%")
+    |eval category_test="Persistence"]   
+
+    |append[|inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time|rename asset_id as TacticID 
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Privilege Escalation%")
+    |eval category_test="Privilege Escalation"]   
+
+    |append[|inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time
+    |rename asset_id as TacticID 
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Defense Evasion%")
+    |eval category_test="Defense Evasion"]   
+
+    |append[|inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time
+    |rename asset_id as TacticID 
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Credential Access%")
+    |eval category_test="Credential Access"]   
+
+    |append[|inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time|rename asset_id as TacticID 
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Lateral Movement%")
+    |eval category_test="Lateral Movement"]   
+
+    |append[|inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time
+    |rename asset_id as TacticID 
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Collection%")
+    |eval category_test="Collection"]   
+
+    |append[|inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time
+    |rename asset_id as TacticID 
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Exfiltration%")
+    |eval category_test="Exfiltration"]   
+
+    |append[|inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time|rename asset_id as TacticID 
+    | join TacticID[|inputlookup df_tactic_detail.csv]
+    |where like(Category,"%Command and Control%")
+    |eval category_test="Command and Control"]
+    
+    |stats sum(DetectionScore) as score_detection, sum(ResponseScore) as score_response, sum(SophisticationScore) as score_sophistication, count(DetectionScore) as tactic_count by category_test DateReport 
+    |eval score_composite = score_detection + score_response +score_sophistication  
+    | eval score_composite=round(score_composite*100/(tactic_count*300))  
+    |rename score_composite as previous_score | fields category_test previous_score ]  
+
+| table category_test previous_score current_score 
+| rename previous_score as " Previous" current_score as "Current" category_test as Category</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">column</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.axisTitleY.text">% Capable</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Detection Ratings - # of Attack Types</title>
+        <search>
+          <query>|inputlookup df_tactic_rating_poc.csv 
+| stats count(TacticID) as current_count by DetectionRating DetectionScore
+   
+|join DetectionRating [ |inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time 
+    | dedup asset_id
+    | stats count(asset_id) as previous_count by DetectionRating DetectionScore
+]  
+
+| sort - DetectionScore
+|table DetectionRating, previous_count, current_count  
+|rename current_count as Current previous_count as Previous DetectionRating as Rating</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Response Ratings - # of Attacks</title>
+        <search>
+          <query>|inputlookup df_tactic_rating_poc.csv 
+| stats count(TacticID) as current_count by ResponseRating ResponseScore
+   
+|join ResponseRating [ |inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time 
+    | dedup asset_id
+    | stats count(asset_id) as previous_count by ResponseRating ResponseScore
+]  
+
+| sort - ResponseScore
+|table ResponseRating, previous_count, current_count  
+|rename current_count as Current previous_count as Previous ResponseRating as Rating</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Attacker Experience Level - # of Attack Tactics</title>
+        <search>
+          <query>|inputlookup df_tactic_rating_poc.csv 
+| stats count(TacticID) as current_count by SophisticationRating SophisticationScore
+   
+|join SophisticationRating [ |inputlookup df_rating_archive.csv
+    | eval current_time=relative_time(now(),"-7d")
+    | eval previous_time=relative_time(now(),"-16d") 
+    | where asset_type="tactic" and DateReport &gt;= previous_time and DateReport &lt; current_time 
+    | dedup asset_id
+    | stats count(asset_id) as previous_count by SophisticationRating SophisticationScore
+]  
+
+| sort - SophisticationScore
+|table SophisticationRating, previous_count, current_count  
+|rename current_count as Current previous_count as Previous SophisticationRating as Rating</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Tactic Scoring Changes from POC</title>
+        <search>
+          <query>| inputlookup df_tactic_rating_poc.csv
+| eval epoch1=strptime(DateAdded, "%Y-%m-%d")
+
+| join TacticID[
+| inputlookup df_tactic_rating.csv
+| rename Comment as Comment2 Contact as Contact2 DateAdded as DateAdded2 DetectionRating as DetectionRating2 DetectionScore as DetectionScore2 ResponseRating as ResponseRating2 ResponseScore as ResponseScore2 SophisticationRating as SophisticationRating2 SophisticationScore as SophisticationScore2
+| eval epoch2=strptime(DateAdded2, "%Y-%m-%d")
+]
+
+| join TacticID [
+| inputlookup df_tactic_detail.csv
+| fields Tactic, TacticID
+]
+
+| where epoch1 &gt; epoch2
+| eval "Last Updated"=DateAdded
+| eval pre_POC_time=DateAdded2
+| eval "Detection Score Change"=(DetectionScore-DetectionScore2)
+| eval "Response Score Change"=(ResponseScore-ResponseScore2)
+| eval "Sophistication Score Change"=(SophisticationScore-SophisticationScore2)
+
+| rename DetectionRating as "New Detection Rating" DetectionScore as "New Detection Score" ResponseRating as "New Response Rating" ResponseScore as "New Response Score" SophisticationRating as "New Sophistication Rating"   SophisticationScore as "New Sophistication Score"
+
+| table TacticID, Tactic, "Last Updated", "Detection Score Change", "Response Score Change", "Sophistication Score Change", Contact, Comment
+
+| sort TacticID</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>

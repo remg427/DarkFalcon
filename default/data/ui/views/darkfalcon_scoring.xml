@@ -1,0 +1,106 @@
+<form stylesheet="search:dark.css">
+  <fieldset submitButton="true" autoRun="true">
+    <input type="dropdown" token="input_asset_type">
+      <label>Asset Type</label>
+      <choice value="tactic">tactic</choice>
+      <choice value="analytic">analytic</choice>
+    </input>
+    <input type="dropdown" token="input_asset" id="input_dropdown1">
+      <label>Asset</label>
+      <search>
+        <query>|inputlookup df_tactic_detail.csv| eval type="tactic"| rename Tactic as asset, TacticID as asset_id| fields type, asset, asset_id
+| append [|inputlookup df_analytic_detail.csv| eval type="analytic"| rename Summary as asset, AnalyticID as asset_id| fields type, asset, asset_id]
+| where type="$input_asset_type$"</query>
+        <earliest>0</earliest>
+        <latest></latest>
+      </search>
+      <fieldForLabel>asset</fieldForLabel>
+      <fieldForValue>asset_id</fieldForValue>
+      <choice value="*">All (*)</choice>
+    </input>
+    <input type="dropdown" token="input_detection">
+      <label>Detection Score</label>
+      <choice value="No Visual">No Visual</choice>
+      <choice value="Local Visual">Local Visual</choice>
+      <choice value="Central Visual">Central Visual</choice>
+      <choice value="Active Visual">Active Visual</choice>
+    </input>
+    <input type="dropdown" token="input_response">
+      <label>Response Score</label>
+      <choice value="No Response">No Response</choice>
+      <choice value="Identification">Identification</choice>
+      <choice value="Response">Response</choice>
+      <choice value="Identification and Response">Identification and Response</choice>
+    </input>
+    <input type="dropdown" token="input_sophistication">
+      <label>Sophistication Score</label>
+      <choice value="Novice">Novice</choice>
+      <choice value="Practitioner">Practitioner</choice>
+      <choice value="Expert">Expert</choice>
+      <choice value="Innovator">Innovator</choice>
+    </input>
+    <input type="text" token="input_comment">
+      <label>Comment</label>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>|inputlookup df_tactic_rating.csv| eval type="tactic"| rename TacticID as asset_id
+| append [|inputlookup df_analytic_rating.csv| eval type="analytic"| rename  AnalyticID as asset_id]
+| fields - TacticID Summary
+
+| append [     stats count | eval type = "$input_asset_type$"     
+	| eval asset_id = "$input_asset$"
+	| eval DetectionRating= "$input_detection$"
+	| eval ResponseRating= "$input_response$"
+	| eval SophisticationRating= "$input_sophistication$"
+	| eval Comment= "$input_comment$"
+	| eval temp_dt = now()   
+	| eval DateAdded = strftime(now(), "%Y-%m-%d")           
+	| fields - _raw _time count
+	| table *     
+	|  join type=outer [ |rest /services/authentication/current-context/context| fields username| where username!="splunk-system-user"  | rename username AS Contact]]  
+
+| eval DetectionScore=case(DetectionRating=="No Visual", 0,DetectionRating=="Local Visual", 30, DetectionRating=="Central Visual", 60, DetectionRating=="Active Visual", 100)
+| eval ResponseScore=case(ResponseRating=="No Response", 0,ResponseRating=="Identification", 30, ResponseRating=="Response", 60, ResponseRating=="Identification and Response", 100)
+| eval SophisticationScore=case(SophisticationRating=="Novice", 0,SophisticationRating=="Practitioner", 30, SophisticationRating=="Expert", 60, SophisticationRating=="Innovator", 100)
+
+| sort -temp_dt
+| dedup type, asset_id 
+| fields - temp_dt
+| sort - DateAdded
+
+| outputlookup df_scoring_temp.csv
+
+| where test="nothing"
+| append [|inputlookup df_scoring_temp.csv ]
+| where type="tactic"
+| rename asset_id as TacticID
+| fields - type 
+| table *
+|outputlookup df_tactic_rating.csv
+
+| where test="nothing"
+| append [|inputlookup df_scoring_temp.csv ]
+| where type="analytic"
+| rename asset_id as AnalyticID
+| fields - type
+| table *
+|outputlookup df_analytic_rating.csv
+
+| where test="nothing"| append [stats count | eval Summary="That $input_asset_type$ was updated successfully and is now reflected on the dashboard"]
+| table Summary</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+</form>

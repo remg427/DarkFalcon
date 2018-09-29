@@ -1,0 +1,368 @@
+<dashboard stylesheet="search:dark.css">
+  <row>
+    <panel>
+      <single>
+        <search>
+          <query>|inputlookup df_tactic_detail.csv|stats dc(Tactic) as Tactics</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">TotalTactics</option>
+      </single>
+      <single>
+        <search>
+          <query>|inputlookup df_analytic_detail.csv|stats dc(AnalyticID) as Analytics</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">TotalAnalytics</option>
+      </single>
+      <single>
+        <search>
+          <query>|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where DetectionScore=0|stats dc(Tactic) as Tactics</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xd93f3c"]</option>
+        <option name="rangeValues">[0,5,10]</option>
+        <option name="underLabel">Tatics With No Detection</option>
+      </single>
+      <single>
+        <search>
+          <query>|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where ResponseScore=0|stats dc(Tactic) as Tactics</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,20]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">Tactics With No Response</option>
+      </single>
+      <single>
+        <search>
+          <query>|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where SophisticationScore=0|stats dc(Tactic) as Tactics</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xd93f3c"]</option>
+        <option name="rangeValues">[0,10,20]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">Tactics at a Novice Level</option>
+      </single>
+      <html>
+        <div align="right">
+      	<style>.btn-secondary { margin: 5px 10px 5px 0; }</style>
+        <a href="darkfalcon_tactic_detail" class="btn btn-secondary" target="_BLANK">View Tactic Detail</a>
+        
+        <a href="darkfalcon_analytic_detail" class="btn btn-secondary" target="_BLANK">View Analytic Detai</a>
+        
+        <a href="darkfalcon_security_posture" class="btn btn-secondary" target="_BLANK">View Security Posture</a>
+        </div>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>
+      <hr/>
+    </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Rating Archive Report - Last 30 Days</title>
+        <search>
+          <query>| rest /servicesNS/-/-/saved/searches/ | dedup title| where like(title,"darkfalcon_rating_report") | fields next_scheduled_time| rename next_scheduled_time as Time| eval Status="Scheduled" | table Status Time | append [search index=_audit savedsearch_name="darkfalcon_rating_report" info="completed" | rename _time as Time| eval Time=strftime(Time,"%Y-%m-%d %H:%M:%S %Z")| eval Status="Completed" | table Status Time]</query>
+          <earliest>-30d@d</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Tactic Scoring By Categry</title>
+        <search>
+          <query>|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where like(Category,"%Discovery%")|eval category_test="Discovery" |append [|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where like(Category,"%Execution%")|eval category_test="Execution"] |append [|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where like(Category,"%Persistence%")|eval category_test="Persistence"] |append [|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where like(Category,"%Privilege Escalation%")|eval category_test="Privilege Escalation"] |append [|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where like(Category,"%Defense Evasion%")|eval category_test="Defense Evasion"] |append [|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where like(Category,"%Credential Access%")|eval category_test="Credential Access"] |append [|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where like(Category,"%Lateral Movement%")|eval category_test="Lateral Movement"] |append [|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where like(Category,"%Collection%")|eval category_test="Collection"] |append [|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where like(Category,"%Exfiltration%")|eval category_test="Exfiltration"] |append [|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv]|where like(Category,"%Command and Control%")|eval category_test="Command and Control"] |eval CompositeScore=DetectionScore+ResponseScore+SophisticationScore  |stats sum(DetectionScore) as DetectionScore, sum(ResponseScore) as ResponseScore, sum(SophisticationScore) as SophisticationScore by category_test|rename category_test as Category</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="charting.chart">column</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Most Protected Tactics</title>
+        <search>
+          <query>|inputlookup df_tactic_rating.csv |eval CompositeScore=DetectionScore+ResponseScore+SophisticationScore| where CompositeScore&gt;150 | join TacticID[|inputlookup df_tactic_detail.csv] | makemv delim="," Category | table Category TacticID Tactic CompositeScore|sort -CompositeScore</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_tactic_detail?form.input_tactic_id=$row.TacticID$</link>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Least Protected Tactics</title>
+        <search>
+          <query>|inputlookup df_tactic_rating.csv |eval CompositeScore=DetectionScore+ResponseScore+SophisticationScore| where CompositeScore&lt;100 | join TacticID[|inputlookup df_tactic_detail.csv]| makemv delim="," Category | table Category TacticID Tactic CompositeScore|sort CompositeScore</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_tactic_detail?form.input_tactic_id=$row.TacticID$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Tactic Scoring Clustering</title>
+        <search>
+          <query>|inputlookup df_tactic_rating.csv| join TacticID[|inputlookup df_tactic_detail.csv] |eval CompositeScore=DetectionScore+ResponseScore+SophisticationScore|stats values(CompositeScore), values(ResponseScore), values(DetectionScore) by Tactic</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="charting.chart">bubble</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">-90</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.minimumNumber">-20</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.axisX.minimumNumber">-5</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Tactics Manually Scored - Not Scored in Last 90 days</title>
+        <search>
+          <query>|inputlookup df_tactic_detail.csv 
+| fields - DatedAdded 
+| join type=left TacticID[|inputlookup df_tactic_rating.csv]  
+
+| fillnull value="manual" scoring_method
+| fillnull value="2000-01-01"  DateAdded 
+| eval epoch1=strptime(DateAdded,"%Y-%m-%d")  
+| eval oldest=relative_time(now(),"-90d@d")  
+
+| where epoch1 &lt; oldest and  scoring_method!="automated"
+
+| sort epoch1  
+| table TacticID, Tactic, DateAdded, Contact</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">highlow</option>
+        <option name="count">10</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_tactic_detail?form.input_tactic_id=$row.TacticID$</link>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Tactics Automatically Scored - Not Scored in Last 14 days</title>
+        <search>
+          <query>|inputlookup df_tactic_detail.csv 
+| fields - DatedAdded 
+| join type=left TacticID[|inputlookup df_tactic_rating.csv]  
+
+| fillnull value="manual" scoring_method
+| fillnull value="2000-01-01"  DateAdded 
+| eval epoch1=strptime(DateAdded,"%Y-%m-%d")  
+| eval oldest=relative_time(now(),"-14d@d")  
+
+| where epoch1 &lt; oldest and scoring_method="automated"
+
+| sort epoch1  
+| table TacticID, Tactic, DateAdded, Contact</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_analytic_detail?form.input_analytic_id=$row.AnalyticID$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Top 10 Tactics With Most Controls</title>
+        <search>
+          <query>| inputlookup df_tactic_control_map.csv
+| join TacticID [| inputlookup df_tactic_detail.csv| fields TacticID Tactic]
+| join df_control_id [| inputlookup df_control_detail.csv| fields df_control_id control_name control_vendor]
+
+| table TacticID Tactic df_control_id control_name control_vendor DateAdded Contact
+| stats count by Tactic TacticID
+| sort - count
+| head 10</query>
+          <earliest>-4h@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+        <option name="drilldown">row</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_tactic_detail?form.input_tactic_id=$row.TacticID$</link>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>10 Lowest Control Count to Tactics</title>
+        <search>
+          <query>| inputlookup df_tactic_control_map.csv
+| join TacticID [| inputlookup df_tactic_detail.csv| fields TacticID Tactic]
+| join df_control_id [| inputlookup df_control_detail.csv| fields df_control_id control_name control_vendor]
+
+| table TacticID Tactic df_control_id control_name control_vendor DateAdded Contact
+| stats count by Tactic TacticID
+| sort count
+| head 10</query>
+          <earliest>-4h@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_tactic_detail?form.input_tactic_id=$row.TacticID$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+</dashboard>

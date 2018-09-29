@@ -1,0 +1,118 @@
+<form stylesheet="search:dark.css">
+  <label>darkfalcon_control_detail</label>
+  <description>Used for viewing and updating security controls</description>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="dropdown" token="input_control_id" id="input_dropdown1">
+      <label>Control</label>
+      <search>
+        <query>|inputlookup df_control_detail.csv| eval control_label=df_control_id." ".control_name</query>
+        <earliest>0</earliest>
+        <latest></latest>
+      </search>
+      <fieldForLabel>control_label</fieldForLabel>
+      <fieldForValue>df_control_id</fieldForValue>
+      <choice value="*">All (*)</choice>
+      <choice value="new">New</choice>
+    </input>
+    <input type="dropdown" token="input_vendor">
+      <label>Vendor</label>
+      <choice value="SY-Symantec">Symantec</choice>
+      <choice value="CS-Cisco">Cisco</choice>
+      <choice value="MS-Microsoft">Microsoft</choice>
+      <choice value="SP-Splunk">Splunk</choice>
+      <choice value="CA-CA">CA</choice>
+    </input>
+    <input type="text" token="input_control_name">
+      <label>Control Name</label>
+      <choice value="No Response">No Response</choice>
+      <choice value="Identification">Identification</choice>
+      <choice value="Response">Response</choice>
+      <choice value="Identification and Response">Identification and Response</choice>
+    </input>
+    <input type="text" token="input_description">
+      <label>Description</label>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>New Entry</title>
+      <table>
+        <search>
+          <query>| inputlookup df_control_detail.csv 
+
+| append
+[
+    stats count 
+    | eval input_control_id = trim("$input_control_id$")
+    | eval control_name= trim("$input_control_name$")
+    | eval control_description = trim("$input_description$")
+    | eval vendor_raw = trim("$input_vendor$")
+    |rex field=vendor_raw "(?&lt;control_vendor_shortname&gt;.*)\-(?&lt;control_vendor&gt;.*)"
+
+    | eval added_datetime = now()
+    | eval date_added = strftime(now(), "%Y-%m-%d")
+    | eval date_updated = strftime(now(), "%Y-%m-%d")     
+    | table *
+    | join type=outer
+    [ 
+        rest /services/authentication/current-context/context          
+        | fields + username          
+        | rename username as contact
+    ]     
+    | fields - _raw _time count
+    | appendcols [ |inputlookup df_control_detail.csv
+        | eval vendor_raw = trim("$input_vendor$")
+        | rex field=vendor_raw "(?&lt;control_vendor_short&gt;.*)\-(?&lt;control_vendor&gt;.*)"
+        | where like(df_control_id,control_vendor_short."-%")
+        | sort -df_control_id | head 1
+        | rex field=df_control_id "(?&lt;temp_vend_short&gt;.*)\-(?&lt;control_id&gt;.*)"
+        | append [|inputlookup df_tactic_detail.csv| eval temp_control_id=1337|fields temp_control_id| head 1]        
+        | eval vendor_raw = trim("$input_vendor$")
+        | rex field=vendor_raw "(?&lt;control_vendor_short&gt;.*)\-(?&lt;control_vendor&gt;.*)"
+        | fillnull value=0 control_id
+        | eval control_id=if(control_id!=0,(control_id+1),1)   
+        | eval control_int="000000".control_id| rex field=control_int "(?&lt;control_int&gt;\d{4})$"
+        | eval updated_control_id=control_vendor_short."-".control_int
+        | fields updated_control_id
+    ]
+    | eval df_control_id=if(input_control_id="new",updated_control_id,df_control_id)
+]
+
+| sort -added_datetime
+| dedup control_vendor, control_name
+| sort -date_added
+
+| fields df_control_id, control_vendor, control_name,  control_description, contact, date_added
+
+| outputlookup df_control_detail.csv</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Current Entries</title>
+      <table>
+        <search>
+          <query>| inputlookup df_control_detail.csv 
+| table df_control_id control_vendor control_name control_description contact date_added 
+| sort df_control_id</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</form>

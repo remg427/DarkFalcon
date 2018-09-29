@@ -1,0 +1,226 @@
+<form stylesheet="search:dark.css">
+  <label>darkfalcon_tactic_detail</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="input_tactic_id" searchWhenChanged="true">
+      <label>Tactic</label>
+      <search>
+        <query>|inputlookup df_tactic_detail.csv|fields TacticID Tactic</query>
+        <earliest>-4h@m</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>Tactic</fieldForLabel>
+      <fieldForValue>TacticID</fieldForValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Details</title>
+      <single>
+        <search>
+          <query>|inputlookup df_tactic_detail.csv|where TacticID="$input_tactic_id$"|fields TacticID</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">ID</option>
+      </single>
+      <single>
+        <search>
+          <query>|inputlookup df_tactic_detail.csv|where TacticID="$input_tactic_id$"|fields Tactic</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">Tactic</option>
+      </single>
+      <single>
+        <search>
+          <query>|inputlookup df_tactic_detail.csv|where TacticID="$input_tactic_id$"|fields Category| eval Category=replace(Category,","," ")</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">Category</option>
+      </single>
+      <single>
+        <search>
+          <query>|inputlookup df_tactic_detail.csv|where TacticID="$input_tactic_id$"|fields URL</query>
+          <earliest>0</earliest>
+          <finalized>
+            <condition match="'job.resultCount' == 1">
+              <set token="tok_url">$result.URL$</set>
+            </condition>
+            <condition match="'job.resultCount' != 1">
+              <unset token="tok_url"></unset>
+            </condition>
+          </finalized>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">URL</option>
+        <drilldown target="_blank">
+          <link>$URL$</link>
+        </drilldown>
+      </single>
+      <html>
+      	<style>.btn-secondary { margin: 5px 10px 5px 0; }</style>
+        <a href="$tok_url$" class="btn btn-secondary" target="_BLANK">View Details on MITRE</a>
+        
+        <a href="https://car.mitre.org/caret/#/" class="btn btn-secondary" target="_BLANK">View MITRE CARET</a>
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>|inputlookup df_tactic_detail.csv|where TacticID="$input_tactic_id$"|fields TacticDescription</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>
+      <hr/>
+    </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Scoring</title>
+        <search>
+          <query>|inputlookup df_tactic_rating.csv |join TacticID[|inputlookup df_tactic_detail.csv]|where TacticID="$input_tactic_id$"| eval CompositeScore=DetectionScore+ResponseScore+SophisticationScore| fields TacticID Tactic DetectionRating DetectionScore ResponseRating ResponseScore SophisticationRating SophisticationScore CompositeScore scoring_method DateAdded Contact Comment</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_tactic_scoring?form.input_asset=$row.TacticID$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>
+      <hr/>
+    </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Controls</title>
+        <search>
+          <query>| inputlookup df_tactic_control_map.csv
+| join TacticID [| inputlookup df_tactic_detail.csv| fields TacticID Tactic]
+| join df_control_id [| inputlookup df_control_detail.csv| fields df_control_id control_name control_vendor]
+
+| where TacticID="$input_tactic_id$"
+
+| table df_control_id control_name control_vendor DateAdded Contact
+| sort df_control_id</query>
+          <earliest>-4h@m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_tactic_control_link?form.input_tactic_id=$input_tactic_id$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>
+      <hr/>
+    </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Linked Analytics</title>
+        <search>
+          <query>| inputlookup df_analytic_detail.csv|where like(TacticID,"%$input_tactic_id$%")|table AnalyticID Summary URL</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <drilldown target="_blank">
+          <link>darkfalcon_analytic_detail?form.input_analytic_id=$row.AnalyticID$</link>
+        </drilldown>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</form>

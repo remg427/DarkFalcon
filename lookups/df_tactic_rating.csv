@@ -1,0 +1,6 @@
+Comment,Contact,DateAdded,DetectionRating,DetectionScore,ResponseRating,ResponseScore,SophisticationRating,SophisticationScore,TacticID,scoring_method
+,admin,8/1/2017,No Visual,0,No Response,0,Novice,0,T1031,manual
+,admin,8/1/2017,Central Visual,100,Identification,30,Novice,0,T1081,manual
+,admin,8/1/2017,Central Visual,100,Identification,30,Novice,0,T1095,manual
+,automated,8/1/2017,Local Visual,30,Identification,30,Novice,0,T1078,automated
+,admin,8/1/2017,No Visual,0,No Response,0,Novice,0,T1019,manual

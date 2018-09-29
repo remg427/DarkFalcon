@@ -1,0 +1,44 @@
+<nav search_view="search" color="#474444">
+  <collection label="DarkFalcon">
+    <view name="darkfalcon"/>
+    <divider/>
+    <view name="darkfalcon_security_posture"/>
+    <view name="darkfalcon_word_cloud"/>
+    <view name="darkfalcon_attack_path_external"/>
+    <view name="darkfalcon_attack_path_internal"/>
+    <divider/>
+    <collection label="Details">
+      <view name="darkfalcon_tactic_detail"/>
+      <view name="darkfalcon_control_detail"/>
+      <view name="darkfalcon_analytic_detail"/>
+    </collection>
+    <divider/>
+    <collection label="Attack Profiling">
+      <view name="darkfalcon_attack_profile_detail"/>
+      <view name="darkfalcon_attack_profile_entry"/>
+    </collection>
+    <collection label="Proof of Concept Modeling">
+      <view name="darkfalcon_security_posture_poc"/>
+      <view name="darkfalcon_tactic_scoring_poc"/>
+      <view name="darkfalcon_poc_reset"/>
+      <view name="darkfalcon_notables"/>
+    </collection>
+    <collection label="Tomorrow Modeling">
+      <view name="darkfalcon_tomorrow_model"/>
+      <view name="darkfalcon_tactic_control_link_tomorrow"/>
+      <view name="darkfalcon_tomorrow_reset"/>
+    </collection>
+    <divider/>
+    <collection label="Utilities">
+      <view name="darkfalcon_tactic_scenario_link"/>
+      <view name="darkfalcon_tactic_control_link"/>
+      <view name="darkfalcon_tactic_scoring"/>
+      <view name="darkfalcon_analytic_scoring"/>
+      <view name="df_firedrill_scenario_to_notable_rule"/>
+    </collection>
+  </collection>
+  <view name="search" default="true"/>
+  <view name="reports"/>
+  <view name="alerts"/>
+  <view name="dashboards"/>
+</nav>
