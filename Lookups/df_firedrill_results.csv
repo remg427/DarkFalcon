@@ -1,7 +1,0 @@
-OutcomeID,OutcomeName,ProjectID,ProjectName,ResultID,ResultTime,ScenarioID,ScenarioName,src,src_ip
-1 or 2,Passed or Failed,64f373fb-aeb0-4af5-55df-123456789pdj,MITRE ATT&CK,140a13e4-f87d-4b28-a84f-f17137213db2,1498232149,064ad62c-bfef-4afc-9df0-5ac81552b005,TeslaCrypt 2.1 Drupal Binary Request,source_vm,source_ip
-1 or 2,Passed or Failed,64f373fb-aeb0-4af5-55df-123456789pdj,MITRE ATT&CK,e7b29a35-cbb7-44fe-8791-cbee9f77e834,1498228005,1fe7ee58-2a08-4d8b-bfa8-3bf6372dc679,Angler Fareit/Pony Post Infection Checkin,source_vm,source_ip
-1 or 2,Passed or Failed,64f373fb-aeb0-4af5-55df-123456789pdj,MITRE ATT&CK,a65120e5-4889-4250-9cfa-1fabcea5b538,1498231925,2363a002-75bc-4ddd-a9db-5234a39af71c,IXESHE Etumbot CnC Communication,source_vm,source_ip
-1 or 2,Passed or Failed,64f373fb-aeb0-4af5-55df-123456789pdj,MITRE ATT&CK,e3cb205d-1870-4691-bad1-2e51f137d325,1498227948,2f653145-01eb-4825-bc5e-cbace8a9045c,Taidoor CnC Communication,source_vm,source_ip
-1 or 2,Passed or Failed,64f373fb-aeb0-4af5-55df-123456789pdj,MITRE ATT&CK,18816733-954d-44bf-92dd-5e0b820783f5,1498231920,39b6bf70-550b-4e35-8d09-c0ae347a0ebf,Bartalex Word Macro Communication,source_vm,source_ip
-1 or 2,Passed or Failed,64f373fb-aeb0-4af5-55df-123456789pdj,MITRE ATT&CK,4c7f86d3-08f6-466c-9ad9-4930dac97249,1498232126,3dc10bbb-8752-46b3-954a-ffb2b4984971,PlugX CnC Instruction Download,source_vm,source_ip

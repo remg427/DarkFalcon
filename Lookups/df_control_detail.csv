@@ -1,6 +1,0 @@
-contact,control_description,control_name,control_vendor,date_added,df_control_id
-Admin,Wireless Access Management System,Clearpass,Aruba,7/26/2017,AR-0001
-Admin,Endpoint compliance and network access control,Network Access Control (NAC),Symantec,7/26/2017,SY-0004
-Admin,Mobile Device Management,MobileIron,MobileIron,7/26/2017,MI-0001
-Admin,Vulnerability Scanner,Qualys Vulnerability Scanning,Qualys,7/26/2017,QS-0001
-Admin,data-centric encryption and tokenization,Protegrity Vaultless Tokenization,Protegrity,7/26/2017,PR-0001
